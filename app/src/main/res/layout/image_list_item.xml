@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:textSize="12sp"
+        android:id="@+id/tvImageTime"
+        android:gravity="end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/ivImage"
+        android:src="@drawable/beauty_of_venice_wide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/tvImageDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
