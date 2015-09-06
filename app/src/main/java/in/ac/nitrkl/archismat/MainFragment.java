@@ -1,21 +1,28 @@
 package in.ac.nitrkl.archismat;
 
 
-import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,27 +35,42 @@ import in.ac.nitrkl.archismat.data.ArchismatDBHealper;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 315;
     private static final String LOG_TAG = "MainFragment";
     private ArchismatCursorAdapter mAdapter;
     private String mStartDate;
 
+    public static final String LONG = "longitude";
+    public static final String LAT = "latitude";
+    public static final String SNIPPET = "snippet";
+
+
+    public static int deviceWidth;
+
     public MainFragment() {
         setHasOptionsMenu(true);
     }
+
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //Bundle arg = getArguments();
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        deviceWidth = metrics.widthPixels;
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        deviceWidth = metrics.widthPixels;
         getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
@@ -63,7 +85,50 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), "SHORT CLICK " + i, Toast.LENGTH_LONG).show();
+
+                Cursor cursor = mAdapter.getCursor();
+                if (cursor != null && cursor.moveToPosition(i)) {
+
+                    int type = cursor.getInt(ArchismatDBHealper.ARCH_UPDATE_TYPE);
+
+                    switch (type) {
+                        case 0:
+                            break;
+                        case 1:
+                            double latitude = cursor.getDouble(ArchismatDBHealper.ARCH_LAT);
+                            double longitude = cursor.getDouble(ArchismatDBHealper.ARCH_LONG);
+                            String snippet = cursor.getString(ArchismatDBHealper.ARCH_SNIPPET);
+
+                            Bundle data = new Bundle();
+                            data.putDouble(LONG, longitude);
+                            data.putDouble(LAT, latitude);
+                            data.putString(SNIPPET, snippet);
+
+                            Intent mapIntent = new Intent(getActivity(), MapActivity.class);
+                            mapIntent.putExtras(data);
+                            startActivity(mapIntent);
+                            break;
+                        case 2:
+                            break;
+                        default:
+                            throw new UnsupportedOperationException();
+                    }
+
+                }
+            }
+        });
+
+        registerForContextMenu(listView);
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
             }
         });
 
@@ -73,13 +138,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd0000");
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd000000");
         String sd = format.format( new Date() );
 
         String selection = ArchismatContract.RECEIVE_TIME + " >= ? ";
         String[] selectionArgs = new String[]{sd};
         String sortOrder = ArchismatContract.RECEIVE_TIME + " DESC";
-
         return new CursorLoader(getActivity(), ArchismatContract.CONTENT_URI,  null, selection, selectionArgs, sortOrder);
     }
 
@@ -97,37 +161,34 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         mAdapter.swapCursor(null);
     }
 
-    private ContentValues getAlertValues(String date){
-        ContentValues values = new ContentValues();
-        values.put(ArchismatContract.DESCRIPTION, "I didn't wanted to but i did!!!");
-        values.put(ArchismatContract.UPDATE_TYPE, 0);
-        values.put(ArchismatContract.RECEIVE_TIME, date);
-        return values;
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
     }
 
-    private ContentValues getEventValues(String date) {
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
 
-        ContentValues values = new ContentValues();
-        values.put(ArchismatContract.DESCRIPTION, "Event will be held in BBA at 9:30");
-        values.put(ArchismatContract.UPDATE_TYPE, 1);
-        values.put(ArchismatContract.RECEIVE_TIME, date);
-        values.put(ArchismatContract.LOCATION_NAME, "Rourela");
-        values.put(ArchismatContract.LOCATION_LONG, 53.625);
-        values.put(ArchismatContract.LOCATION_LAT, 56.665);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-        return values;
-    }
+        Cursor data = mAdapter.getCursor();
 
-    private ContentValues getImageValues(String date){
-
-        ContentValues values = new ContentValues();
-        values.put(ArchismatContract.UPDATE_TITLE, "Test title");
-        values.put(ArchismatContract.DESCRIPTION, "Simply beautifull !!!");
-        values.put(ArchismatContract.UPDATE_TYPE, 2);
-        values.put(ArchismatContract.RECEIVE_TIME, date);
-        values.put(ArchismatContract.FEATURED_PICK, "hot_axxx.jpg");
-
-        return values;
+        switch ( item.getItemId() ) {
+            case R.id.action_delete:
+                if( data.moveToPosition( info.position ) ) {
+                    Uri idUri = ArchismatContract.buildArchismatUri( data.getLong(ArchismatDBHealper.ARCH_ID) );
+                    if( getActivity().getContentResolver().delete( idUri, null, null) > 0) {
+                        Toast.makeText(getActivity(), getString(R.string.delete_success), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), getString(R.string.delete_fail), Toast.LENGTH_LONG).show();
+                    }
+                }
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
 }

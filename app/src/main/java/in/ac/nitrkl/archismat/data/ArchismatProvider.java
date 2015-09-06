@@ -33,6 +33,9 @@ public class ArchismatProvider extends ContentProvider {
                 sortOrder);
 
         Log.d("CONTENT_QUERY", cursor.getCount()+"");
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
 
     }
@@ -45,6 +48,7 @@ public class ArchismatProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
         long id = mDbHealper.getWritableDatabase().insert(ArchismatContract.TABLE_NAME, null, contentValues);
+        getContext().getContentResolver().notifyChange(uri, null);
         return ArchismatContract.buildArchismatUri( id );
     }
 
@@ -53,7 +57,7 @@ public class ArchismatProvider extends ContentProvider {
 
         String selection = ArchismatContract._ID + " = ? ";
         long id = ArchismatContract.getArchismatId(uri);
-
+        getContext().getContentResolver().notifyChange(uri, null);
         return mDbHealper.getWritableDatabase().delete(ArchismatContract.TABLE_NAME, selection, new String[]{ Long.toString(id) });
     }
 

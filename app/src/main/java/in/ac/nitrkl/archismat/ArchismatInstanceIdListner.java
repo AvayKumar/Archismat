@@ -4,7 +4,6 @@ import android.content.Intent;
 
 import com.google.android.gms.iid.InstanceIDListenerService;
 
-import in.ac.nitrkl.archismat.utils.Defined;
 
 /**
  * Created by avay on 25/8/15.

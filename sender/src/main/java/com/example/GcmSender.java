@@ -36,10 +36,10 @@ public class GcmSender {
             // Prepare JSON containing the GCM message content. What to send and where to send.
             JSONObject jGcmData = new JSONObject();
             JSONObject jData = new JSONObject();
-            String dataAlert = "{\"type\": \"0\", \"message\":\"Second alert message\"}";
-            String dataEvent = "{\"type\": \"1\", \"location\":\"NIT Rourkela, BBA\",\"desc\":\"Event description\",\"long\":\"84.850666\",\"lat\":\"22.261017\"}";
-            String dataPic = "{\"type\": \"2\", \"url\":\"http://10.0.2.2/test/hot-bitch.jpg\",\"desc\":\"This is dummy picture description\"}";
-            jData.put("data", dataAlert);
+            String dataAlert = "{\"type\": \"0\", \"message\":\"Third alert message\"}";
+            String dataEvent = "{\"type\": \"1\", \"location\":\"NIT Rourkela, BBA\",\"snippet\":\"Computer Science Department\",\"desc\":\"Event description\",\"long\":\"84.900676\",\"lat\":\"22.251738\"}";
+            String dataPic = "{\"type\": \"2\", \"url\":\"http://10.42.0.1/test/dream-village.jpg\",\"desc\":\"This is dummy picture description\"}";
+            jData.put("message", dataAlert);
             // Where to send GCM message.
             if (args.length > 1 && args[1] != null) {
                 jGcmData.put("to", args[1].trim());
@@ -57,7 +57,7 @@ public class GcmSender {
             conn.setRequestProperty("Authorization", "key=" + API_KEY);
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
+            conn.setDoOutput( true );
 
             // Send GCM message content.
             OutputStream outputStream = conn.getOutputStream();

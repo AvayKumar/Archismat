@@ -29,6 +29,8 @@ public class ArchismatContract implements BaseColumns {
 
     public static final String RECEIVE_TIME = "notification_received";
 
+    public static final String SNIPPET = "snippet";
+
     public static final String LOCATION_NAME = "location_name";
 
     public static final String LOCATION_LAT = "latitude";
@@ -47,15 +49,7 @@ public class ArchismatContract implements BaseColumns {
 
     public static final String DATE_TIME = "datetime";
 
-    public static Uri buildArchismatWithStartDate( String startDate) {
-        return CONTENT_URI.buildUpon().appendQueryParameter(DATE_TIME, startDate).build();
-    }
-
-    public static String getStartDate(Uri uri) {
-        return uri.getQueryParameter(DATE_TIME);
-    }
-
-    public static final String DATETIME_FORMAT = "yyyyMMddHHmm";
+    public static final String DATETIME_FORMAT = "yyyyMMddHHmmss";
     public static final String READABLE_DATE_FORMAT = "h:m a, dd MMM yyyy";
 
     public static String getDbDateString( Date date) {

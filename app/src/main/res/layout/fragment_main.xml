@@ -6,7 +6,9 @@
     tools:context="in.ac.nitrkl.archismat.MainFragment">
     <ListView
         android:id="@+id/lvFeed"
+        android:dividerHeight="@dimen/list_divider_height"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:choiceMode="multipleChoice">
     </ListView>
 </LinearLayout>

@@ -8,13 +8,17 @@
     android:layout_marginBottom="@dimen/list_item_vertical_margin"
     android:padding="@dimen/list_item_padding"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/list_background">
+    android:layout_height="wrap_content">
     <TextView
         android:text="1:39 PM, 31 Aug 2015"
-        android:textSize="@dimen/text_medium"
+        android:textSize="@dimen/text_small"
         android:id="@+id/tvEventTime"
         android:gravity="end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:text="Bhubneswar Behra Auditorium"
+        android:textSize="@dimen/text_large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <TextView

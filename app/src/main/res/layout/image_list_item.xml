@@ -2,21 +2,35 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:layout_marginTop="@dimen/list_item_vertical_margin"
+    android:layout_marginBottom="@dimen/list_item_vertical_margin"
+    android:layout_marginRight="@dimen/list_item_horizontal_margin"
+    android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+    android:paddingTop="@dimen/list_item_padding"
+    android:paddingBottom="@dimen/list_item_padding"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TextView
-        android:textSize="12sp"
+        android:text="1:39 PM, 31 Aug 2015"
+        android:textSize="@dimen/text_small"
         android:id="@+id/tvImageTime"
         android:gravity="end"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <ImageView
         android:id="@+id/ivImage"
-        android:src="@drawable/beauty_of_venice_wide"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scaleType="fitXY"/>
     <TextView
+        android:text="Design around Android's capabilities and conventions to give users the best experience."
+        android:textSize="@dimen/text_extra_large"
         android:id="@+id/tvImageDescription"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

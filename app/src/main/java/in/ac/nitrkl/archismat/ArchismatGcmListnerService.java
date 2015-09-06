@@ -35,15 +35,14 @@ import in.ac.nitrkl.archismat.data.ArchismatContract;
 public class ArchismatGcmListnerService extends GcmListenerService {
 
     private static final String LOG_TAG = "GcmListner";
-    public static final String TYPE = "type";
     private String mCurrentFilePath;
 
     @Override
     public void onMessageReceived(String from, Bundle bundle) {
 
-        String data = bundle.getString("data");
+        String data = bundle.getString("message");
 
-        Log.i(LOG_TAG, "From: " + from );
+        Log.i(LOG_TAG, "From: " + from);
         Log.i(LOG_TAG, "Message: " + data);
 
         sendNotification(data);
@@ -94,16 +93,16 @@ public class ArchismatGcmListnerService extends GcmListenerService {
             case 1:
                 String desc = dataObject.getString("desc");
                 String location = dataObject.getString("location");
+                String snippet = dataObject.getString("snippet");
                 double longitude = dataObject.getDouble("long");
                 double latitude = dataObject.getDouble("lat");
                 getContentResolver().insert( ArchismatContract.CONTENT_URI,
-                        getEventValues(receiveTime, desc, location, longitude, latitude) );
+                        getEventValues(receiveTime, desc, location, snippet, longitude, latitude) );
                 break;
             case 2:
                 String url = dataObject.getString("url");
                 String imageDesc = dataObject.getString("desc");
-                getContentResolver().insert(ArchismatContract.CONTENT_URI,
-                        getPictureValues(receiveTime, imageDesc, url));
+                new DownloadImageTask(getApplication(), imageDesc, receiveTime).execute( url );
                 break;
             default:
                 throw new UnsupportedOperationException();
@@ -120,7 +119,7 @@ public class ArchismatGcmListnerService extends GcmListenerService {
         return values;
     }
 
-    private ContentValues getEventValues(String date, String desc, String location, double longitude, double latitude) {
+    private ContentValues getEventValues(String date, String desc, String snippet, String location, double longitude, double latitude) {
 
         ContentValues values = new ContentValues();
 
@@ -128,138 +127,14 @@ public class ArchismatGcmListnerService extends GcmListenerService {
         values.put(ArchismatContract.DESCRIPTION, desc);
         values.put(ArchismatContract.RECEIVE_TIME, date);
         values.put(ArchismatContract.LOCATION_NAME, location);
+        values.put(ArchismatContract.SNIPPET, snippet);
         values.put(ArchismatContract.LOCATION_LONG, longitude);
         values.put(ArchismatContract.LOCATION_LAT, latitude);
 
         return values;
     }
 
-    private ContentValues getPictureValues(String date, String desc, String imageUrl) {
-
-        // Image download snippet
-        Uri imageUri = Uri.parse( imageUrl );
-        String mFileName = imageUri.getLastPathSegment();
-
-        HttpURLConnection connection = null;
-        Uri diskImageUri = null;
-        InputStream inputStream = null;
-        FileOutputStream fileOutputStream = null;
-
-        try {
-            URL url = new URL( imageUri.toString() );
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.connect();
-
-            inputStream = connection.getInputStream();
-            Bitmap imageBitmap = BitmapFactory.decodeStream( inputStream );
-
-            File imageFilePath = createImageFile(mFileName);
-
-            Log.d("FILE_NAME", mCurrentFilePath);
-
-            fileOutputStream = new FileOutputStream( imageFilePath );
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream);
-            fileOutputStream.flush();
-            fileOutputStream.close();
-            galleryAddPic();
-
-            if( isExternalStorageReadable() ) {
-                File albumDir = createAlbum();
-                File imageDir = new File(albumDir, mFileName);
-                diskImageUri = Uri.fromFile( imageDir );
-            }
 
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            if( connection != null ) {
-                connection.disconnect();
-            }
-
-            if( inputStream != null ) {
-                try {
-                    inputStream.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-
-            if( fileOutputStream != null ) {
-                try {
-                    fileOutputStream.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-
-        }
-
-        if( connection != null ) {
-            connection.disconnect();
-        }
-
-        if( inputStream != null ) {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        ContentValues values = new ContentValues();
-
-        values.put(ArchismatContract.UPDATE_TYPE, 2);
-        values.put(ArchismatContract.DESCRIPTION, desc);
-        values.put(ArchismatContract.RECEIVE_TIME, date);
-        values.put(ArchismatContract.FEATURED_PICK, diskImageUri.toString());
-
-        return values;
-    }
-
-    private void  galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File file = new File( mCurrentFilePath );
-        Uri fileUri = Uri.fromFile( file );
-        mediaScanIntent.setData(fileUri);
-        this.sendBroadcast( mediaScanIntent );
-    }
-
-    private File createImageFile(String fileName) throws IOException {
-
-        File imageFile = null;
-
-        if( isExternalStorageWritable() ) {
-            File fileDirectory = createAlbum();
-            imageFile = new File(fileDirectory, fileName);
-        } else {
-            Log.e("WRITABLE", "External storage not writable");
-        }
-
-        if( imageFile != null ) {
-            mCurrentFilePath = imageFile.getAbsolutePath();
-        }
-
-        return imageFile;
-    }
-
-    private File createAlbum() {
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Archismat");
-
-        if( !file.mkdir() ) {
-            Log.e("MKDIR", "Failed to create file OR Directory exists");
-        }
-        return file;
-    }
-
-    private boolean isExternalStorageWritable(){
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state);
-    }
-
-    private boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        return (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
-    }
 
 }

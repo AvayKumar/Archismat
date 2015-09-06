@@ -9,4 +9,5 @@
     <dimen name="list_item_horizontal_margin">8dp</dimen>
     <dimen name="list_item_vertical_margin">8dp</dimen>
     <dimen name="list_item_padding">8dp</dimen>
+    <dimen name="list_divider_height">8dp</dimen>
 </resources>

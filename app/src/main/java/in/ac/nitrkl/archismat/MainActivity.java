@@ -1,24 +1,28 @@
 package in.ac.nitrkl.archismat;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,8 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "MainActivity";
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-    private ProgressBar mRegistrationProgressBar;
-    private TextView mInformationTextView;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,26 +41,61 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                //mRegistrationProgressBar.setVisibility(TextView.GONE);
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
                 boolean sentToken = preferences.getBoolean(ArchismatPreferences.SENT_TOKEN_TO_SERVER, false);
 
                 if( sentToken ) {
-                    //mInformationTextView.setText( getString(R.string.gcm_send_message) );
+                    progressDialog.hide();
+                    Log.d(LOG_TAG, "Token received successfully");
+
                 } else {
-                    //mInformationTextView.setText( getString(R.string.token_error_message) );
+                    progressDialog.hide();
+                    Log.d(LOG_TAG, "Error occurred while retrieve Token");
+
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder( MainActivity.this );
+                    dialogBuilder.setTitle( R.string.token_error_title)
+                            .setMessage( R.string.token_error_message  )
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            });
+                    dialogBuilder.create().show();
+
                 }
 
             }
         };
 
-        //mInformationTextView = (TextView) findViewById(R.id.message);
-        //mRegistrationProgressBar = (ProgressBar) findViewById(R.id.progress);
+        if( checkConnection() ) {
 
-        if( checkPlayServices() ) {
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
+            if (checkPlayServices()) {
+
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setCancelable(false);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setProgressStyle( ProgressDialog.STYLE_SPINNER );
+                progressDialog.setMessage( getResources().getString(R.string.progress_dialog_message) );
+
+                progressDialog.show();
+
+                Intent intent = new Intent(this, RegistrationIntentService.class);
+                startService(intent);
+            }
+
+        } else {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder( this );
+            dialogBuilder.setTitle( R.string.alert_dialog_title)
+                         .setMessage( R.string.alert_dialog_content  )
+                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                             @Override
+                             public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                             }
+                         });
+            dialogBuilder.create().show();
         }
     }
 
@@ -72,6 +110,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if( progressDialog != null )
+            progressDialog.dismiss();
     }
 
     @Override
@@ -97,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-       Check if GooglePlay service is available on the device
-    * */
+           Check if GooglePlay service is available on the device
+        * */
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
@@ -112,6 +157,15 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private boolean checkConnection() {
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return ( networkInfo != null && networkInfo.isConnected() );
+
     }
 
 }

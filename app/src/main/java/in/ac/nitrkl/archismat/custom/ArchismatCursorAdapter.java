@@ -2,7 +2,11 @@ package in.ac.nitrkl.archismat.custom;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v4.widget.CursorAdapter;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +14,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import in.ac.nitrkl.archismat.MainFragment;
 import in.ac.nitrkl.archismat.R;
 import in.ac.nitrkl.archismat.data.ArchismatContract;
 import in.ac.nitrkl.archismat.data.ArchismatDBHealper;
 
+import java.io.File;
 import java.util.Date;
 
 /**
@@ -21,6 +27,7 @@ import java.util.Date;
  */
 public class ArchismatCursorAdapter extends CursorAdapter {
 
+    private Context context;
 
     private static final int VIEW_TYPE_COUNT = 3;
     private static final int VIEW_TYPE_ALERT = 0;
@@ -30,6 +37,7 @@ public class ArchismatCursorAdapter extends CursorAdapter {
 
     public ArchismatCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+        this.context = context;
     }
 
     @Override
@@ -88,8 +96,11 @@ public class ArchismatCursorAdapter extends CursorAdapter {
             case VIEW_TYPE_PICTURE:
                 ViewHolderImage holderImage = (ViewHolderImage) view.getTag();
                 holderImage.receiveTime.setText( readAbleDate );
-                holderImage.description.setText( cursor.getString( ArchismatDBHealper.ARCH_DESCRIPTION ) );
-                holderImage.imageUpdate.setImageResource(R.drawable.beauty_of_venice_wide);
+                holderImage.description.setText(cursor.getString(ArchismatDBHealper.ARCH_DESCRIPTION));
+                String imageLocation = cursor.getString(ArchismatDBHealper.ARCH_PICK_URI);
+                Uri uri = Uri.parse(imageLocation);
+                //Bitmap imageBitmap = scaleImage(MainFragment.deviceWidth, imageLocation);
+                holderImage.imageUpdate.setImageURI( uri );
                 break;
 
             default:
@@ -133,14 +144,29 @@ public class ArchismatCursorAdapter extends CursorAdapter {
 
     public static class ViewHolderEvent {
         public final TextView receiveTime;
-        public final Button viewMap;
         public final TextView description;
 
         public ViewHolderEvent(View view) {
             receiveTime = (TextView) view.findViewById(R.id.tvEventTime);
-            viewMap = (Button) view.findViewById(R.id.bViewMap);
             description = (TextView) view.findViewById(R.id.tvEventDescription);
         }
+    }
+
+    private Bitmap scaleImage(int ivWidth, String fileName) {
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile( fileName, options );
+
+        int imageWidth = options.outWidth;
+
+        int scaleFactor = Math.max( 1, imageWidth/ivWidth);
+
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = scaleFactor;
+
+
+        return BitmapFactory.decodeFile(fileName, options);
     }
 
 }
