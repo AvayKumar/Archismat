@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- Base application theme. -->
@@ -13,13 +14,19 @@
         <item name="actionBarStyle">@style/ActionBar.Solid.Archismat.NoTitle</item>
     </style>
 
+    <!-- Settings activity theme. -->
+    <style name="SettingsTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/ActionBar.V14.Archismat.NoTitle</item>
+    </style>
 
-    <style name="SettingsTheme" parent="AppTheme"></style>
+    <!-- Settings activity action bar styles -->
+    <style name="ActionBar.V14.Archismat.NoTitle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/archismat_sunrise</item>
+        <item name="android:height">56dp</item>
+    </style>
 
     <style name="ActionBar.Solid.Archismat.NoTitle" parent="ActionBar.Solid.Archismat">
         <item name="displayOptions">useLogo|showHome</item>
         <item name="logo">@mipmap/ic_launcher</item>
     </style>
-
-
 </resources>

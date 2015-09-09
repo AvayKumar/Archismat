@@ -36,10 +36,10 @@ public class GcmSender {
             // Prepare JSON containing the GCM message content. What to send and where to send.
             JSONObject jGcmData = new JSONObject();
             JSONObject jData = new JSONObject();
-            String dataAlert = "{\"type\": \"0\", \"message\":\"Third alert message\"}";
-            String dataEvent = "{\"type\": \"1\", \"location\":\"NIT Rourkela, BBA\",\"snippet\":\"Computer Science Department\",\"desc\":\"Event description\",\"long\":\"84.900676\",\"lat\":\"22.251738\"}";
-            String dataPic = "{\"type\": \"2\", \"url\":\"http://10.42.0.1/test/dream-village.jpg\",\"desc\":\"This is dummy picture description\"}";
-            jData.put("message", dataAlert);
+            String dataAlert = "{\"type\": \"0\", \"message\":\"Test alert message. Test alert message. Test alert message. Test alert message. Test alert message. Test alert message.\"}";
+            String dataEvent = "{\"type\": \"1\", \"location\":\"NIT Rourkela, BBA\",\"desc\":\"Event description. Event description. Event description. Event description.\",\"long\":\"84.900676\",\"lat\":\"22.251738\"}";
+            String dataPic = "{\"type\": \"2\", \"url\":\"http://cdn.banquenationale.ca/cdnbnc/2013/06/ruisseau.jpg\",\"desc\":\"This is dummy picture description. This is dummy picture description. This is dummy picture description. This is dummy picture description.\"}";
+            jData.put("message", dataPic);
             // Where to send GCM message.
             if (args.length > 1 && args[1] != null) {
                 jGcmData.put("to", args[1].trim());

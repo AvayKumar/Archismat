@@ -20,7 +20,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private double longitude, latitude;
-    private String snippet;
+    private String locationName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Bundle data = intent.getExtras();
         longitude = data.getDouble(MainFragment.LONG);
         latitude = data.getDouble(MainFragment.LAT);
-        snippet = data.getString(MainFragment.SNIPPET);
+        locationName = data.getString(MainFragment.LOCATION);
 
     }
 
@@ -60,9 +60,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions()
                 .position( location )
                 .title( "NIT Rourkela" )
-                .snippet( snippet ));
+                .snippet( locationName ) );
         mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        CameraPosition cameraPosition = CameraPosition.builder().target(location).zoom(17).build();
+        CameraPosition cameraPosition = CameraPosition.builder().target(location).zoom(14).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
     }
 

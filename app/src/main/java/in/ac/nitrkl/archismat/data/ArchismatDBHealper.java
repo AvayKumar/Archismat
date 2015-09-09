@@ -11,15 +11,13 @@ public class ArchismatDBHealper extends SQLiteOpenHelper {
 
 
     public static final int ARCH_ID = 0;
-    public static final int ARCH_TITLE = 1;
-    public static final int ARCH_DESCRIPTION = 2;
-    public static final int ARCH_UPDATE_TYPE = 3;
-    public static final int ARCH_RECEIVE_TIME = 4;
-    public static final int ARCH_SNIPPET = 5;
-    public static final int ARCH_LOCATION = 6;
-    public static final int ARCH_LONG = 7;
-    public static final int ARCH_LAT = 8;
-    public static final int ARCH_PICK_URI = 9;
+    public static final int ARCH_DESCRIPTION = 1;
+    public static final int ARCH_UPDATE_TYPE = 2;
+    public static final int ARCH_RECEIVE_TIME = 3;
+    public static final int ARCH_LOCATION = 4;
+    public static final int ARCH_LONG = 5;
+    public static final int ARCH_LAT = 6;
+    public static final int ARCH_PICK_URI = 7;
 
 
 
@@ -40,11 +38,9 @@ public class ArchismatDBHealper extends SQLiteOpenHelper {
         final String SQL_CREATE_TABLE =
                 "CREATE TABLE " + ArchismatContract.TABLE_NAME + " (" +
                         ArchismatContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        ArchismatContract.UPDATE_TITLE + " TEXT, " +
                         ArchismatContract.DESCRIPTION + " TEXT, " +
                         ArchismatContract.UPDATE_TYPE + " INTEGER, " +
                         ArchismatContract.RECEIVE_TIME + " TEXT, " +
-                        ArchismatContract.SNIPPET + " TEXT, " +
                         ArchismatContract.LOCATION_NAME + " TEXT, " +
                         ArchismatContract.LOCATION_LONG + " REAL, " +
                         ArchismatContract.LOCATION_LAT + " REAL, " +

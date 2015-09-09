@@ -10,4 +10,11 @@
     <dimen name="list_item_vertical_margin">8dp</dimen>
     <dimen name="list_item_padding">8dp</dimen>
     <dimen name="list_divider_height">8dp</dimen>
+    <dimen name="list_divider_margin">4dp</dimen>
+
+    <dimen name="fragment_padding">8dp</dimen>
+    <dimen name="margin_medium">8dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
+    <dimen name="padding_medium">8dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
 </resources>

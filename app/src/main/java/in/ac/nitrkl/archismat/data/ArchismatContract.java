@@ -21,15 +21,11 @@ public class ArchismatContract implements BaseColumns {
 
     public static final String TABLE_NAME = "event_feed";
 
-    public static final String UPDATE_TITLE = "header";
-
     public static final String DESCRIPTION = "description";
 
     public static final String UPDATE_TYPE = "update_type";
 
     public static final String RECEIVE_TIME = "notification_received";
-
-    public static final String SNIPPET = "snippet";
 
     public static final String LOCATION_NAME = "location_name";
 

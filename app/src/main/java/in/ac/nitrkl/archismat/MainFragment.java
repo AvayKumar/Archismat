@@ -27,7 +27,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import in.ac.nitrkl.archismat.custom.ArchismatCursorAdapter;
+import in.ac.nitrkl.archismat.util.ArchismatCursorAdapter;
 import in.ac.nitrkl.archismat.data.ArchismatContract;
 import in.ac.nitrkl.archismat.data.ArchismatDBHealper;
 
@@ -44,7 +44,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     public static final String LONG = "longitude";
     public static final String LAT = "latitude";
-    public static final String SNIPPET = "snippet";
+    public static final String LOCATION = "location";
 
 
     public static int deviceWidth;
@@ -77,7 +77,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView =inflater.inflate(R.layout.fragment_main, null);
+        View rootView =inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.lvFeed);
         mAdapter = new ArchismatCursorAdapter(getActivity(), null, 0);
         listView.setAdapter(mAdapter);
@@ -93,22 +93,42 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
                     switch (type) {
                         case 0:
+                            AlertFragment alertFragment = AlertFragment.getAlertFragment( cursor.getString( ArchismatDBHealper.ARCH_DESCRIPTION ) );
+
+                            getActivity().getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.pop_in, R.anim.pop_out)
+                                    .replace(R.id.main_container, alertFragment)
+                                    .addToBackStack(null)
+                                    .commit();
                             break;
                         case 1:
                             double latitude = cursor.getDouble(ArchismatDBHealper.ARCH_LAT);
                             double longitude = cursor.getDouble(ArchismatDBHealper.ARCH_LONG);
-                            String snippet = cursor.getString(ArchismatDBHealper.ARCH_SNIPPET);
+                            String locatoin = cursor.getString(ArchismatDBHealper.ARCH_LOCATION);
 
                             Bundle data = new Bundle();
                             data.putDouble(LONG, longitude);
                             data.putDouble(LAT, latitude);
-                            data.putString(SNIPPET, snippet);
+                            data.putString(LOCATION, locatoin);
 
                             Intent mapIntent = new Intent(getActivity(), MapActivity.class);
                             mapIntent.putExtras(data);
                             startActivity(mapIntent);
                             break;
                         case 2:
+
+                            ShareImageFragment shareImage = ShareImageFragment.getShareFragment(
+                                    cursor.getString( ArchismatDBHealper.ARCH_PICK_URI ),
+                                    cursor.getString( ArchismatDBHealper.ARCH_DESCRIPTION )
+                            );
+
+                            getActivity().getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.pop_in, R.anim.pop_out)
+                                    .replace(R.id.main_container, shareImage)
+                                    .addToBackStack(null)
+                                    .commit();
                             break;
                         default:
                             throw new UnsupportedOperationException();

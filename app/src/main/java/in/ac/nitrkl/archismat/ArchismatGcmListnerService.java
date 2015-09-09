@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -28,6 +29,7 @@ import java.net.URL;
 import java.util.Date;
 
 import in.ac.nitrkl.archismat.data.ArchismatContract;
+import in.ac.nitrkl.archismat.util.Notification;
 
 /**
  * Created by avay on 25/8/15.
@@ -45,34 +47,11 @@ public class ArchismatGcmListnerService extends GcmListenerService {
         Log.i(LOG_TAG, "From: " + from);
         Log.i(LOG_TAG, "Message: " + data);
 
-        sendNotification(data);
-
         try {
             insertIntoDataBase(data);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    private void sendNotification(String message) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT);
-
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("GCM Message")
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0, notificationBuilder.build());
     }
 
     private void insertIntoDataBase(String data) throws JSONException {
@@ -81,23 +60,40 @@ public class ArchismatGcmListnerService extends GcmListenerService {
 
         int type = dataObject.getInt("type");
 
-        String receiveTime = ArchismatContract.getDbDateString( new Date() );
+        String receiveTime = ArchismatContract.getDbDateString(new Date());
+
+        boolean notification = PreferenceManager.getDefaultSharedPreferences(this)
+                                .getBoolean(getString(R.string.SETTING_NOTIFICATION_KEY), true);
 
         switch ( type ) {
             case 0:
                 String message = dataObject.getString("message");
                 getContentResolver().insert( ArchismatContract.CONTENT_URI,
                         getAlertValues(receiveTime, message) );
+
+                if( notification ) {
+                    Notification.sendAlertNotification(
+                            getApplication(),
+                            getResources().getString(R.string.alert_notification_title),
+                            message
+                    );
+                }
                 Log.d("Alert message", message);
                 break;
             case 1:
                 String desc = dataObject.getString("desc");
                 String location = dataObject.getString("location");
-                String snippet = dataObject.getString("snippet");
                 double longitude = dataObject.getDouble("long");
                 double latitude = dataObject.getDouble("lat");
                 getContentResolver().insert( ArchismatContract.CONTENT_URI,
-                        getEventValues(receiveTime, desc, location, snippet, longitude, latitude) );
+                        getEventValues(receiveTime, desc, location, longitude, latitude) );
+                if( notification ) {
+                    Notification.sendEventNotification(
+                            getApplication(),
+                            getResources().getString(R.string.event_notification_title),
+                            location
+                    );
+                }
                 break;
             case 2:
                 String url = dataObject.getString("url");
@@ -119,7 +115,7 @@ public class ArchismatGcmListnerService extends GcmListenerService {
         return values;
     }
 
-    private ContentValues getEventValues(String date, String desc, String snippet, String location, double longitude, double latitude) {
+    private ContentValues getEventValues(String date, String desc, String location, double longitude, double latitude) {
 
         ContentValues values = new ContentValues();
 
@@ -127,7 +123,6 @@ public class ArchismatGcmListnerService extends GcmListenerService {
         values.put(ArchismatContract.DESCRIPTION, desc);
         values.put(ArchismatContract.RECEIVE_TIME, date);
         values.put(ArchismatContract.LOCATION_NAME, location);
-        values.put(ArchismatContract.SNIPPET, snippet);
         values.put(ArchismatContract.LOCATION_LONG, longitude);
         values.put(ArchismatContract.LOCATION_LAT, latitude);
 

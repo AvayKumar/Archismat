@@ -2,25 +2,36 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_marginLeft="@dimen/list_item_horizontal_margin"
-    android:layout_marginRight="@dimen/list_item_horizontal_margin"
-    android:layout_marginTop="@dimen/list_item_vertical_margin"
-    android:layout_marginBottom="@dimen/list_item_vertical_margin"
-    android:padding="@dimen/list_item_padding"
+    android:paddingTop="@dimen/list_item_padding"
+    android:paddingBottom="@dimen/list_item_padding"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TextView
         android:text="1:39 PM, 31 Aug 2015"
         android:textSize="@dimen/text_small"
         android:id="@+id/tvAlertTime"
+        android:fontFamily="sans-serif-condensed"
         android:gravity="end"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
+    <ImageView
+        android:src="@drawable/list_divider"
+        android:layout_marginTop="@dimen/list_divider_margin"
+        android:layout_marginBottom="@dimen/list_divider_margin"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"/>
     <TextView
         android:text="Design around Android's capabilities and conventions to give users the best experience."
-        android:textSize="@dimen/text_extra_large"
+        android:textSize="@dimen/text_large"
         android:id="@+id/tvAlertMessage"
+        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginRight="@dimen/list_item_horizontal_margin"
+        android:fontFamily="sans-serif-condensed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

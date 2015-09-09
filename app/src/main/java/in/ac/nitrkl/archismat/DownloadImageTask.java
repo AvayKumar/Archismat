@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
@@ -18,6 +19,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import in.ac.nitrkl.archismat.data.ArchismatContract;
+import in.ac.nitrkl.archismat.data.ArchismatDBHealper;
+import in.ac.nitrkl.archismat.util.Notification;
+import in.ac.nitrkl.archismat.util.Util;
 
 /**
  * Created by avay on 4/9/15.
@@ -133,6 +137,21 @@ public class DownloadImageTask extends AsyncTask<String, Void, Uri>{
         values.put(ArchismatContract.FEATURED_PICK, uri.toString());
 
         context.getContentResolver().insert(ArchismatContract.CONTENT_URI, values);
+
+        String imageLocation = uri.getPath();
+        Bitmap imageBitmap = Util.scaleImage(MainFragment.deviceWidth, imageLocation);
+
+        boolean notification = PreferenceManager.getDefaultSharedPreferences( context )
+                .getBoolean(context.getString(R.string.SETTING_NOTIFICATION_KEY), true);
+
+        if( notification ) {
+            Notification.sendPictureNotification(
+                    context,
+                    context.getResources().getString(R.string.event_notification_title),
+                    mDesc,
+                    imageBitmap
+            );
+        }
 
     }
 

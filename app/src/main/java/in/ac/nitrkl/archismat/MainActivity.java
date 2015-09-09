@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSupportFragmentManager().beginTransaction().add(R.id.main_container, new MainFragment()).commit();
+
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                          .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                              @Override
                              public void onClick(DialogInterface dialog, int which) {
-                                finish();
+
                              }
                          });
             dialogBuilder.create().show();
@@ -135,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent setting = new Intent(MainActivity.this, ArchismatSetting.class);
+            startActivity(setting);
             return true;
         }
 
