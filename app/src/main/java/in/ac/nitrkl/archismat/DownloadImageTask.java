@@ -122,6 +122,11 @@ public class DownloadImageTask extends AsyncTask<String, Void, Uri>{
             }
         }
 
+        if( diskImageUri != null )
+            Log.d(LOG_TAG, "NOT_NUL");
+        else
+            Log.d(LOG_TAG, "NULL");
+
         return diskImageUri;
     }
 

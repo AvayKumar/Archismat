@@ -93,42 +93,20 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
                     switch (type) {
                         case 0:
-                            AlertFragment alertFragment = AlertFragment.getAlertFragment( cursor.getString( ArchismatDBHealper.ARCH_DESCRIPTION ) );
-
-                            getActivity().getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.pop_in, R.anim.pop_out)
-                                    .replace(R.id.main_container, alertFragment)
-                                    .addToBackStack(null)
-                                    .commit();
+                            ((Callback) getActivity()).onClickAlert(cursor.getString(ArchismatDBHealper.ARCH_DESCRIPTION));
                             break;
                         case 1:
-                            double latitude = cursor.getDouble(ArchismatDBHealper.ARCH_LAT);
-                            double longitude = cursor.getDouble(ArchismatDBHealper.ARCH_LONG);
-                            String locatoin = cursor.getString(ArchismatDBHealper.ARCH_LOCATION);
-
-                            Bundle data = new Bundle();
-                            data.putDouble(LONG, longitude);
-                            data.putDouble(LAT, latitude);
-                            data.putString(LOCATION, locatoin);
-
-                            Intent mapIntent = new Intent(getActivity(), MapActivity.class);
-                            mapIntent.putExtras(data);
-                            startActivity(mapIntent);
+                            ((Callback) getActivity()).onClickEvent(
+                                    cursor.getString(ArchismatDBHealper.ARCH_LOCATION),
+                                    cursor.getDouble(ArchismatDBHealper.ARCH_LONG),
+                                    cursor.getDouble(ArchismatDBHealper.ARCH_LAT)
+                            );
                             break;
                         case 2:
-
-                            ShareImageFragment shareImage = ShareImageFragment.getShareFragment(
+                            ((Callback) getActivity()).onClickPick(
                                     cursor.getString( ArchismatDBHealper.ARCH_PICK_URI ),
                                     cursor.getString( ArchismatDBHealper.ARCH_DESCRIPTION )
                             );
-
-                            getActivity().getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.pop_in, R.anim.pop_out)
-                                    .replace(R.id.main_container, shareImage)
-                                    .addToBackStack(null)
-                                    .commit();
                             break;
                         default:
                             throw new UnsupportedOperationException();
@@ -209,6 +187,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    public interface Callback {
+        void onClickAlert(String message );
+        void onClickEvent(String location, double longitude, double latitude);
+        void onClickPick(String uri, String desc);
     }
 
 }

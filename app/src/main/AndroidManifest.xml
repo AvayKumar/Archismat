@@ -39,16 +39,6 @@
         </activity>
 
         <activity
-            android:name=".MapActivity"
-            android:label="@string/map_activity"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/ArchismatTheme" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-
-        <activity
             android:name=".ArchismatSetting"
             android:label="@string/archismat_setting"
             android:parentActivityName=".MainActivity"

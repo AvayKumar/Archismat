@@ -10,27 +10,35 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainFragment.Callback, OnMapReadyCallback {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String LOG_TAG = "MainActivity";
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private ProgressDialog progressDialog;
+    private String locationName;
+    private double longitude, latitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +79,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        if( checkConnection() ) {
+        if (checkPlayServices()) {
 
-            if (checkPlayServices()) {
+            if( checkConnection() ) {
 
                 progressDialog = new ProgressDialog(this);
                 progressDialog.setCancelable(false);
@@ -85,20 +93,22 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(this, RegistrationIntentService.class);
                 startService(intent);
+
+            } else {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder( this );
+                dialogBuilder.setTitle( R.string.alert_dialog_title)
+                        .setMessage( R.string.alert_dialog_content  )
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                dialogBuilder.create().show();
             }
 
-        } else {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder( this );
-            dialogBuilder.setTitle( R.string.alert_dialog_title)
-                         .setMessage( R.string.alert_dialog_content  )
-                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                             @Override
-                             public void onClick(DialogInterface dialog, int which) {
-
-                             }
-                         });
-            dialogBuilder.create().show();
         }
+
     }
 
     @Override
@@ -130,9 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -140,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
             Intent setting = new Intent(MainActivity.this, ArchismatSetting.class);
             startActivity(setting);
             return true;
+        } else if( id == R.id.action_about ) {
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -169,6 +179,68 @@ public class MainActivity extends AppCompatActivity {
 
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return ( networkInfo != null && networkInfo.isConnected() );
+
+    }
+
+    @Override
+    public void onClickAlert(String message) {
+
+        AlertFragment alertFragment = AlertFragment.getAlertFragment( message );
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.pop_in, R.anim.pop_out)
+                .replace(R.id.main_container, alertFragment)
+                .addToBackStack(null)
+                .commit();
+
+    }
+
+    @Override
+    public void onClickEvent(String location, double longitude, double latitude) {
+
+        this.locationName = location;
+        this.longitude = longitude;
+        this.latitude = latitude;
+
+        SupportMapFragment mapFragment = new SupportMapFragment();
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.pop_in, R.anim.pop_out)
+                .replace(R.id.main_container, mapFragment)
+                .addToBackStack(null)
+                .commit();
+
+        mapFragment.getMapAsync(this);
+
+    }
+
+    @Override
+    public void onClickPick(String uri, String desc) {
+
+        ShareImageFragment shareImage = ShareImageFragment.getShareFragment(uri, desc);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.pop_in, R.anim.pop_out)
+                .replace(R.id.main_container, shareImage)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        LatLng location = new LatLng(latitude, longitude);
+
+        googleMap.addMarker(new MarkerOptions()
+                .position( location )
+                .title( "NIT Rourkela" )
+                .snippet( locationName ) );
+        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        CameraPosition cameraPosition = CameraPosition.builder().target(location).zoom(14).build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
 
     }
 
