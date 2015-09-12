@@ -122,11 +122,6 @@ public class DownloadImageTask extends AsyncTask<String, Void, Uri>{
             }
         }
 
-        if( diskImageUri != null )
-            Log.d(LOG_TAG, "NOT_NUL");
-        else
-            Log.d(LOG_TAG, "NULL");
-
         return diskImageUri;
     }
 
@@ -187,7 +182,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Uri>{
     }
 
     private File createAlbum() {
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Archismat");
+        File file = new File(Environment.getExternalStorageDirectory(), "Archismat");
 
         if( !file.mkdir() ) {
             Log.e("MKDIR", "Failed to create file OR Directory exists");

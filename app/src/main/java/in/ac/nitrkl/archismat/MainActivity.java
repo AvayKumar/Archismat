@@ -30,7 +30,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class MainActivity extends AppCompatActivity implements MainFragment.Callback, OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements MainFragment.Callback {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String LOG_TAG = "MainActivity";
@@ -45,7 +45,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.main_container, new MainFragment()).commit();
+        if( savedInstanceState == null ) {
+            getSupportFragmentManager().beginTransaction().add(R.id.main_container, new MainFragment()).commit();
+        }
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -79,9 +81,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             }
         };
 
-        if (checkPlayServices()) {
-
-            if( checkConnection() ) {
+        if (checkPlayServices() && checkConnection() ) {
 
                 progressDialog = new ProgressDialog(this);
                 progressDialog.setCancelable(false);
@@ -93,19 +93,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
                 Intent intent = new Intent(this, RegistrationIntentService.class);
                 startService(intent);
-
-            } else {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder( this );
-                dialogBuilder.setTitle( R.string.alert_dialog_title)
-                        .setMessage( R.string.alert_dialog_content  )
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                dialogBuilder.create().show();
-            }
 
         }
 
@@ -178,7 +165,22 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return ( networkInfo != null && networkInfo.isConnected() );
+        if( networkInfo != null && networkInfo.isConnected() ) {
+            return true;
+        } else {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder( this );
+            dialogBuilder.setTitle( R.string.alert_dialog_title)
+                    .setMessage(R.string.alert_dialog_content  )
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+            dialogBuilder.create().show();
+
+            return false;
+        }
 
     }
 
@@ -199,11 +201,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     @Override
     public void onClickEvent(String location, double longitude, double latitude) {
 
-        this.locationName = location;
-        this.longitude = longitude;
-        this.latitude = latitude;
+        Bundle data = new Bundle();
 
-        SupportMapFragment mapFragment = new SupportMapFragment();
+        data.putString(MapFragment.LOCATION_NAME, location);
+        data.putDouble(MapFragment.LOCATION_LONG, longitude);
+        data.putDouble(MapFragment.LOCATION_LAT, latitude);
+
+        MapFragment mapFragment = MapFragment.getMapFragment( data );
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -211,9 +215,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
                 .replace(R.id.main_container, mapFragment)
                 .addToBackStack(null)
                 .commit();
-
-        mapFragment.getMapAsync(this);
-
     }
 
     @Override
@@ -227,21 +228,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
                 .replace(R.id.main_container, shareImage)
                 .addToBackStack(null)
                 .commit();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        LatLng location = new LatLng(latitude, longitude);
-
-        googleMap.addMarker(new MarkerOptions()
-                .position( location )
-                .title( "NIT Rourkela" )
-                .snippet( locationName ) );
-        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        CameraPosition cameraPosition = CameraPosition.builder().target(location).zoom(14).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
-
     }
 
 }

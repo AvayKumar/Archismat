@@ -104,8 +104,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                             break;
                         case 2:
                             ((Callback) getActivity()).onClickPick(
-                                    cursor.getString( ArchismatDBHealper.ARCH_PICK_URI ),
-                                    cursor.getString( ArchismatDBHealper.ARCH_DESCRIPTION )
+                                    cursor.getString(ArchismatDBHealper.ARCH_PICK_URI),
+                                    cursor.getString(ArchismatDBHealper.ARCH_DESCRIPTION)
                             );
                             break;
                         default:
@@ -114,6 +114,20 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
                 }
             }
+        });
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                Log.i(LOG_TAG, Integer.toString( firstVisibleItem ) );
+            }
+
         });
 
         registerForContextMenu(listView);
