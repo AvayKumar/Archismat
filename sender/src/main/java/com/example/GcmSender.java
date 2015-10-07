@@ -37,15 +37,17 @@ public class GcmSender {
             JSONObject jGcmData = new JSONObject();
             JSONObject jData = new JSONObject();
             String dataAlert = "{\"type\": \"0\", \"message\":\"Test alert message. Test alert message. Test alert message. Test alert message. Test alert message. Test alert message.\"}";
-            String dataEvent = "{\"type\": \"1\", \"location\":\"NIT Rourkela, BBA\",\"desc\":\"Event description. Event description. Event description. Event description.\",\"long\":\"84.900676\",\"lat\":\"22.251738\"}";
-            String dataPic = "{\"type\": \"2\", \"url\":\"http://3.bp.blogspot.com/_gfXupHOEhH0/TN1EXpGA_MI/AAAAAAAASuo/vlGtVAroLbo/s1600/Lamborghini_Sesto_Elemento_1.jpg\",\"desc\":\"This is dummy picture description. This is dummy picture description. This is dummy picture description. This is dummy picture description.\"}";
+            String dataEvent = "{\"type\": \"1\", \"name\":\"Insomania 9 PM\", \"location\":\"NIT Rourkela, BBA\",\"desc\":\"Event description. Event description. Event description. Event description.\",\"long\":\"84.900676\",\"lat\":\"22.251738\"}";
+            String dataPic = "{\"type\": \"2\", \"url\":\"http://www.gettyimages.in/gi-resources/images/Homepage/Category-Creative/UK/UK_Creative_462809583.jpg\",\"desc\":\"This is dummy picture description. This is dummy picture description. This is dummy picture description. This is dummy picture description.\"}";
             jData.put("message", dataPic);
             // Where to send GCM message.
             if (args.length > 1 && args[1] != null) {
                 jGcmData.put("to", args[1].trim());
             } else {
-                jGcmData.put("to", "/topics/archismat");
+                //jGcmData.put("to", "/topics/archismat");
+                jGcmData.put("to", "euS2Tt1BHEg:APA91bFyCSl8LhsGqoMAMsfvwodeXlJlk-C_AzXx37l95-CVmoL35T8GMJXwUSxrslWCxPQFHosyoG2B2mP8mGVtoerWiJ4eoL69105Gl0U5_a-_D095CC7ZMb_DZqNFJ055efRqroDi");
             }
+
             // What to send in GCM message.
             jGcmData.put("data", jData);
 

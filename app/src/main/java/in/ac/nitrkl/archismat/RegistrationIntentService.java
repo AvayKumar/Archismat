@@ -12,6 +12,9 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * Created by avay on 25/8/15.
@@ -36,7 +39,9 @@ public class RegistrationIntentService extends IntentService {
                 InstanceID instanceID = InstanceID.getInstance(this);
                 String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
 
-                sendRegistrationToServer(token);
+                boolean tokenRefreshed = preferences.getBoolean(ArchismatPreferences.TOKEN_REFRESHED, false);
+
+                sendRegistrationToServer(token, tokenRefreshed);
                 subscribeTopics(token);
 
                 preferences.edit().putBoolean(ArchismatPreferences.SENT_TOKEN_TO_SERVER, true).apply();
@@ -53,8 +58,50 @@ public class RegistrationIntentService extends IntentService {
 
     }
 
-    private void sendRegistrationToServer(String token) {
-        // Add custom implementation, as needed.
+    private void sendRegistrationToServer(String token, boolean tokenRefreshed) {
+
+        //Send registration to Application server
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        int previousTokenId = sharedPreferences.getInt(ArchismatPreferences.LAST_TOKEN_ID, -1);
+        String urlString = "http://192.168.43.119/gcm/register-device.php?token=" + token + "&refreshed=" + tokenRefreshed + "&update_id=" + previousTokenId;
+
+        Log.d(LOG_TAG, urlString);
+
+        try {
+
+            URL registrationUrl = new URL( urlString );
+            HttpURLConnection conn = (HttpURLConnection) registrationUrl.openConnection();
+            conn.setRequestMethod( "GET" );
+            conn.setDoInput( true );
+            conn.connect();
+
+            InputStream is = conn.getInputStream();
+
+            int readChar;
+            StringBuffer response = new StringBuffer();
+
+            while( (readChar = is.read()) != -1  ) {
+                response.append( (char) readChar );
+            }
+
+            Log.d(LOG_TAG, response.toString() );
+
+            int  tokenId = Integer.parseInt( response.toString() );
+
+            if( tokenId != -1 && !tokenRefreshed ) {
+                sharedPreferences.edit().putInt(ArchismatPreferences.LAST_TOKEN_ID, tokenId).apply();
+            }
+
+            if( tokenRefreshed && tokenId != -1 ) {
+                sharedPreferences.edit().putBoolean(ArchismatPreferences.TOKEN_REFRESHED, false).apply();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void subscribeTopics(String token) throws IOException {

@@ -1,6 +1,7 @@
 package in.ac.nitrkl.archismat;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,12 +45,16 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
 
         LatLng location = new LatLng( data.getDouble(LOCATION_LAT), data.getDouble(LOCATION_LONG));
 
+        String mapType = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity())
+                    .getString(getString(R.string.SETTING_MAP_TYPE_KEY), "1");
+
         googleMap.setMyLocationEnabled(true);
         googleMap.addMarker(new MarkerOptions()
                 .position( location )
                 .title( "NIT Rourkela" )
                 .snippet( data.getString(LOCATION_NAME) ) );
-        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        googleMap.setMapType( Integer.parseInt( mapType ) );
         CameraPosition cameraPosition = CameraPosition.builder().target(location).zoom(14).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
     }

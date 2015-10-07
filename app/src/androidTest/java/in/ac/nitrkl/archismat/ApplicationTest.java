@@ -29,7 +29,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     private ContentValues getTableContentValues(){
 
         ContentValues values = new ContentValues();
-        values.put(ArchismatContract.UPDATE_TITLE, "Test title");
+        //values.put(ArchismatContract.UPDATE_TITLE, "Test title");
         values.put(ArchismatContract.DESCRIPTION, "I didn't wanted to but i did!!!");
         values.put(ArchismatContract.UPDATE_TYPE, 0);
         values.put(ArchismatContract.RECEIVE_TIME, "2015205");

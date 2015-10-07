@@ -27,6 +27,8 @@ public class ArchismatContract implements BaseColumns {
 
     public static final String RECEIVE_TIME = "notification_received";
 
+    public static final String EVENT_NAME = "event_name";
+
     public static final String LOCATION_NAME = "location_name";
 
     public static final String LOCATION_LAT = "latitude";

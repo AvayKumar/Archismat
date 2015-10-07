@@ -40,7 +40,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final int LOADER_ID = 315;
     private static final String LOG_TAG = "MainFragment";
     private ArchismatCursorAdapter mAdapter;
-    private String mStartDate;
+    private int mQueryLimit = 10;
+    private int preLast;
+
 
     public static final String LONG = "longitude";
     public static final String LAT = "latitude";
@@ -116,20 +118,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             }
         });
 
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                Log.i(LOG_TAG, Integer.toString( firstVisibleItem ) );
-            }
-
-        });
-
         registerForContextMenu(listView);
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -141,6 +129,13 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
+                final int lastItem = firstVisibleItem + visibleItemCount;
+                if( lastItem == totalItemCount && preLast!=lastItem ) {
+                    //to avoid multiple calls for last item
+                    Log.d(LOG_TAG, "Last item : " + lastItem);
+                    preLast = lastItem;
+                }
+
             }
         });
 
@@ -150,13 +145,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd000000");
-        String sd = format.format( new Date() );
-
-        String selection = ArchismatContract.RECEIVE_TIME + " >= ? ";
-        String[] selectionArgs = new String[]{sd};
         String sortOrder = ArchismatContract.RECEIVE_TIME + " DESC";
-        return new CursorLoader(getActivity(), ArchismatContract.CONTENT_URI,  null, selection, selectionArgs, sortOrder);
+        return new CursorLoader(getActivity(), ArchismatContract.CONTENT_URI,  null, null, null, sortOrder);
     }
 
     @Override

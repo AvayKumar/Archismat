@@ -37,7 +37,6 @@ import in.ac.nitrkl.archismat.util.Notification;
 public class ArchismatGcmListnerService extends GcmListenerService {
 
     private static final String LOG_TAG = "GcmListner";
-    private String mCurrentFilePath;
 
     @Override
     public void onMessageReceived(String from, Bundle bundle) {
@@ -71,7 +70,7 @@ public class ArchismatGcmListnerService extends GcmListenerService {
                 getContentResolver().insert( ArchismatContract.CONTENT_URI,
                         getAlertValues(receiveTime, message) );
 
-                if( notification ) {
+                if( notification && !MainActivity.isInForeground) {
                     Notification.sendAlertNotification(
                             getApplication(),
                             getResources().getString(R.string.alert_notification_title),
@@ -82,12 +81,13 @@ public class ArchismatGcmListnerService extends GcmListenerService {
                 break;
             case 1:
                 String desc = dataObject.getString("desc");
+                String name = dataObject.getString("name");
                 String location = dataObject.getString("location");
                 double longitude = dataObject.getDouble("long");
                 double latitude = dataObject.getDouble("lat");
                 getContentResolver().insert( ArchismatContract.CONTENT_URI,
-                        getEventValues(receiveTime, desc, location, longitude, latitude) );
-                if( notification ) {
+                        getEventValues(receiveTime, desc, name, location, longitude, latitude) );
+                if( notification && !MainActivity.isInForeground) {
                     Notification.sendEventNotification(
                             getApplication(),
                             getResources().getString(R.string.event_notification_title),
@@ -115,12 +115,13 @@ public class ArchismatGcmListnerService extends GcmListenerService {
         return values;
     }
 
-    private ContentValues getEventValues(String date, String desc, String location, double longitude, double latitude) {
+    private ContentValues getEventValues(String date, String desc, String name, String location, double longitude, double latitude) {
 
         ContentValues values = new ContentValues();
 
         values.put(ArchismatContract.UPDATE_TYPE, 1);
         values.put(ArchismatContract.DESCRIPTION, desc);
+        values.put(ArchismatContract.EVENT_NAME, name);
         values.put(ArchismatContract.RECEIVE_TIME, date);
         values.put(ArchismatContract.LOCATION_NAME, location);
         values.put(ArchismatContract.LOCATION_LONG, longitude);

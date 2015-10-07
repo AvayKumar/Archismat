@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     private String locationName;
     private double longitude, latitude;
 
+    public static boolean isInForeground = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,32 +83,21 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             }
         };
 
-        if (checkPlayServices() && checkConnection() ) {
-
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setCancelable(false);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setProgressStyle( ProgressDialog.STYLE_SPINNER );
-                progressDialog.setMessage( getResources().getString(R.string.progress_dialog_message) );
-
-                progressDialog.show();
-
-                Intent intent = new Intent(this, RegistrationIntentService.class);
-                startService(intent);
-
-        }
+        validateConnection();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        isInForeground = true;
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(ArchismatPreferences.REGISTRATION_COMPLETE));
     }
 
     @Override
     protected void onPause() {
+        isInForeground = false;
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
     }
@@ -168,10 +159,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
         if( networkInfo != null && networkInfo.isConnected() ) {
             return true;
         } else {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder( this );
+            final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder( this );
             dialogBuilder.setTitle( R.string.alert_dialog_title)
                     .setMessage(R.string.alert_dialog_content  )
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            validateConnection();
+                        }
+                    })
+                    .setNegativeButton("Cangle", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -182,6 +179,23 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             return false;
         }
 
+    }
+
+    private void validateConnection() {
+        if (checkPlayServices() && checkConnection() ) {
+
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setProgressStyle( ProgressDialog.STYLE_SPINNER );
+            progressDialog.setMessage( getResources().getString(R.string.progress_dialog_message) );
+
+            progressDialog.show();
+
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+
+        }
     }
 
     @Override

@@ -86,6 +86,7 @@ public class ArchismatCursorAdapter extends CursorAdapter {
                 holderEvent.location.setText( cursor.getString( ArchismatDBHealper.ARCH_LOCATION ) );
                 holderEvent.receiveTime.setText( readAbleDate );
                 holderEvent.description.setText( cursor.getString( ArchismatDBHealper.ARCH_DESCRIPTION ) );
+                holderEvent.eventName.setText( cursor.getString( ArchismatDBHealper.ARCH_EVENT_NAME ) );
                 break;
 
             case VIEW_TYPE_PICTURE:
@@ -141,11 +142,13 @@ public class ArchismatCursorAdapter extends CursorAdapter {
         public final TextView receiveTime;
         public final TextView description;
         public final TextView location;
+        public final TextView eventName;
 
         public ViewHolderEvent(View view) {
             receiveTime = (TextView) view.findViewById(R.id.tvEventTime);
             description = (TextView) view.findViewById(R.id.tvEventDescription);
             location = (TextView) view.findViewById(R.id.tvEventLocation);
+            eventName = (TextView) view.findViewById(R.id.tvEventName);
         }
     }
 

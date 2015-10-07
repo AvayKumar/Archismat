@@ -6,4 +6,11 @@
         android:key="@string/SETTING_NOTIFICATION_KEY"
         android:defaultValue="true" />
 
+    <ListPreference
+        android:title="Map type"
+        android:key="@string/SETTING_MAP_TYPE_KEY"
+        android:entries="@array/map_types"
+        android:entryValues="@array/map_type_values"
+        android:defaultValue="@string/map_type_default"/>
+
 </PreferenceScreen>

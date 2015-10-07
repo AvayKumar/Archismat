@@ -144,7 +144,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Uri>{
         boolean notification = PreferenceManager.getDefaultSharedPreferences( context )
                 .getBoolean(context.getString(R.string.SETTING_NOTIFICATION_KEY), true);
 
-        if( notification ) {
+        if( notification && !MainActivity.isInForeground) {
             Notification.sendPictureNotification(
                     context,
                     context.getResources().getString(R.string.event_notification_title),

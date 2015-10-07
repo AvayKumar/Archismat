@@ -14,10 +14,11 @@ public class ArchismatDBHealper extends SQLiteOpenHelper {
     public static final int ARCH_DESCRIPTION = 1;
     public static final int ARCH_UPDATE_TYPE = 2;
     public static final int ARCH_RECEIVE_TIME = 3;
-    public static final int ARCH_LOCATION = 4;
-    public static final int ARCH_LONG = 5;
-    public static final int ARCH_LAT = 6;
-    public static final int ARCH_PICK_URI = 7;
+    public static final int ARCH_EVENT_NAME = 4;
+    public static final int ARCH_LOCATION = 5;
+    public static final int ARCH_LONG = 6;
+    public static final int ARCH_LAT = 7;
+    public static final int ARCH_PICK_URI = 8;
 
 
 
@@ -41,6 +42,7 @@ public class ArchismatDBHealper extends SQLiteOpenHelper {
                         ArchismatContract.DESCRIPTION + " TEXT, " +
                         ArchismatContract.UPDATE_TYPE + " INTEGER, " +
                         ArchismatContract.RECEIVE_TIME + " TEXT, " +
+                        ArchismatContract.EVENT_NAME + " TEXT, " +
                         ArchismatContract.LOCATION_NAME + " TEXT, " +
                         ArchismatContract.LOCATION_LONG + " REAL, " +
                         ArchismatContract.LOCATION_LAT + " REAL, " +
