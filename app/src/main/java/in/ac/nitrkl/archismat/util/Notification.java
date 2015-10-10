@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.NotificationCompat;
 
 import in.ac.nitrkl.archismat.MainActivity;
 import in.ac.nitrkl.archismat.R;
@@ -18,6 +18,7 @@ import in.ac.nitrkl.archismat.R;
 public class Notification {
 
     private static final int NOTIFICATION_ID = 315;
+    public static int notificationCount = 0;
 
     public static void sendAlertNotification(Context context, String title, String content) {
 
@@ -35,12 +36,13 @@ public class Notification {
                 .setSound( defaultSoundUri )
                 .setPriority(android.app.Notification.PRIORITY_HIGH )
                 .setAutoCancel(true)
-                .setContentIntent( pendingIntent );
+                .setContentIntent( pendingIntent )
+                .mNumber = ++notificationCount;
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(NOTIFICATION_ID, builder.build() );
+        notificationManager.notify(NOTIFICATION_ID,  builder.build());
 
     }
 
@@ -60,16 +62,17 @@ public class Notification {
                 .setSound(defaultSoundUri)
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap))
                 .setAutoCancel(true)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .mNumber = ++notificationCount;
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(NOTIFICATION_ID, builder.build() );
+        notificationManager.notify(NOTIFICATION_ID,  builder.build());
 
     }
 
-    public static void sendEventNotification (Context context, String title, String location) {
+    public static void sendEventNotification (Context context, String eventName, String location) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
@@ -80,16 +83,17 @@ public class Notification {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         builder.setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle( title )
+                .setContentTitle( eventName )
                 .setContentText( location )
                 .setSound( defaultSoundUri )
                 .setAutoCancel(true)
-                .setContentIntent( pendingIntent );
+                .setContentIntent( pendingIntent )
+                .mNumber = ++notificationCount;
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(NOTIFICATION_ID, builder.build() );
+        notificationManager.notify(NOTIFICATION_ID,  builder.build());
 
 
     }

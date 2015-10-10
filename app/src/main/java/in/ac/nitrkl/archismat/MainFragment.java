@@ -37,17 +37,11 @@ import in.ac.nitrkl.archismat.data.ArchismatDBHealper;
  */
 public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int LOADER_ID = 315;
+    public static final int LOADER_ID = 315;
     private static final String LOG_TAG = "MainFragment";
     private ArchismatCursorAdapter mAdapter;
     private int mQueryLimit = 10;
     private int preLast;
-
-
-    public static final String LONG = "longitude";
-    public static final String LAT = "latitude";
-    public static final String LOCATION = "location";
-
 
     public static int deviceWidth;
 
@@ -60,10 +54,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //Bundle arg = getArguments();
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics( metrics );
-        deviceWidth = metrics.widthPixels;
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
@@ -132,8 +122,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 final int lastItem = firstVisibleItem + visibleItemCount;
                 if( lastItem == totalItemCount && preLast!=lastItem ) {
                     //to avoid multiple calls for last item
-                    Log.d(LOG_TAG, "Last item : " + lastItem);
                     preLast = lastItem;
+                    mQueryLimit += 10;
+                    getLoaderManager().restartLoader(LOADER_ID, null, MainFragment.this);
                 }
 
             }
@@ -145,7 +136,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String sortOrder = ArchismatContract.RECEIVE_TIME + " DESC";
+        String sortOrder = ArchismatContract.RECEIVE_TIME + " DESC LIMIT " + mQueryLimit;
         return new CursorLoader(getActivity(), ArchismatContract.CONTENT_URI,  null, null, null, sortOrder);
     }
 

@@ -29,6 +29,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import in.ac.nitrkl.archismat.util.Notification;
+
 
 public class MainActivity extends AppCompatActivity implements MainFragment.Callback {
 
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Notification.notificationCount = 0;
 
         if( savedInstanceState == null ) {
             getSupportFragmentManager().beginTransaction().add(R.id.main_container, new MainFragment()).commit();
@@ -126,30 +130,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             Intent setting = new Intent(MainActivity.this, ArchismatSetting.class);
             startActivity(setting);
             return true;
-        } else if( id == R.id.action_about ) {
-
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    /*
-           Check if GooglePlay service is available on the device
-        * */
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i(LOG_TAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
 
     private boolean checkConnection() {
 
@@ -168,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
                             validateConnection();
                         }
                     })
-                    .setNegativeButton("Cangle", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -179,6 +164,24 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             return false;
         }
 
+    }
+
+    /*
+    Check if GooglePlay service is available on the device
+    * */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
     private void validateConnection() {

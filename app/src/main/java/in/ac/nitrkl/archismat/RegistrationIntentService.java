@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import in.ac.nitrkl.archismat.util.Util;
+
 /**
  * Created by avay on 25/8/15.
  */
@@ -65,7 +67,7 @@ public class RegistrationIntentService extends IntentService {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         int previousTokenId = sharedPreferences.getInt(ArchismatPreferences.LAST_TOKEN_ID, -1);
-        String urlString = "http://192.168.43.119/gcm/register-device.php?token=" + token + "&refreshed=" + tokenRefreshed + "&update_id=" + previousTokenId;
+        String urlString = Util.BASE_URL + "app/register-device.php?token=" + token + "&refreshed=" + tokenRefreshed + "&update_id=" + previousTokenId;
 
         Log.d(LOG_TAG, urlString);
 
@@ -74,6 +76,7 @@ public class RegistrationIntentService extends IntentService {
             URL registrationUrl = new URL( urlString );
             HttpURLConnection conn = (HttpURLConnection) registrationUrl.openConnection();
             conn.setRequestMethod( "GET" );
+            conn.setConnectTimeout(10000);
             conn.setDoInput( true );
             conn.connect();
 

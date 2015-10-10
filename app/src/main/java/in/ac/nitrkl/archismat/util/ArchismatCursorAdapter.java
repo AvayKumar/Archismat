@@ -6,12 +6,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import in.ac.nitrkl.archismat.DownloadImageTask;
 import in.ac.nitrkl.archismat.MainFragment;
 import in.ac.nitrkl.archismat.R;
 import in.ac.nitrkl.archismat.data.ArchismatContract;
@@ -67,7 +70,7 @@ public class ArchismatCursorAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
 
         int itemType = cursor.getInt(ArchismatDBHealper.ARCH_UPDATE_TYPE);
 
@@ -93,9 +96,12 @@ public class ArchismatCursorAdapter extends CursorAdapter {
                 ViewHolderImage holderImage = (ViewHolderImage) view.getTag();
                 holderImage.receiveTime.setText( readAbleDate );
                 holderImage.description.setText(cursor.getString(ArchismatDBHealper.ARCH_DESCRIPTION));
-                Uri uri = Uri.parse(cursor.getString(ArchismatDBHealper.ARCH_PICK_URI));
+                final Uri uri = Uri.parse(cursor.getString(ArchismatDBHealper.ARCH_PICK_URI));
                 String imageLocation = uri.getPath();
                 Bitmap imageBitmap = Util.scaleImage(MainFragment.deviceWidth, imageLocation);
+                if( imageBitmap == null) {
+                    imageBitmap = Util.scaleDefaultImage(context, MainFragment.deviceWidth);
+                }
                 holderImage.imageUpdate.setImageBitmap( imageBitmap );
                 break;
 

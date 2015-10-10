@@ -38,14 +38,14 @@ public class GcmSender {
             JSONObject jData = new JSONObject();
             String dataAlert = "{\"type\": \"0\", \"message\":\"Test alert message. Test alert message. Test alert message. Test alert message. Test alert message. Test alert message.\"}";
             String dataEvent = "{\"type\": \"1\", \"name\":\"Insomania 9 PM\", \"location\":\"NIT Rourkela, BBA\",\"desc\":\"Event description. Event description. Event description. Event description.\",\"long\":\"84.900676\",\"lat\":\"22.251738\"}";
-            String dataPic = "{\"type\": \"2\", \"url\":\"http://www.gettyimages.in/gi-resources/images/Homepage/Category-Creative/UK/UK_Creative_462809583.jpg\",\"desc\":\"This is dummy picture description. This is dummy picture description. This is dummy picture description. This is dummy picture description.\"}";
-            jData.put("message", dataPic);
+            String dataPic = "{\"type\": \"2\", \"url\":\"http://www.wired.com/images_blogs/rawfile/2013/11/offset_WaterHouseMarineImages_62652-2-660x440.jpg\",\"desc\":\"Start by doing what's necessary ; then do what's possible; and suddenly you are doing the impossible.\"}";
+            jData.put("message", dataEvent);
             // Where to send GCM message.
             if (args.length > 1 && args[1] != null) {
                 jGcmData.put("to", args[1].trim());
             } else {
-                //jGcmData.put("to", "/topics/archismat");
-                jGcmData.put("to", "euS2Tt1BHEg:APA91bFyCSl8LhsGqoMAMsfvwodeXlJlk-C_AzXx37l95-CVmoL35T8GMJXwUSxrslWCxPQFHosyoG2B2mP8mGVtoerWiJ4eoL69105Gl0U5_a-_D095CC7ZMb_DZqNFJ055efRqroDi");
+                jGcmData.put("to", "/topics/archismat");
+                //jGcmData.put("to", "fHVpu62JRuY:APA91bGJXUZ4nV66q3LTZOPVl4MH483w1IiLzxDT_KZpwOYqKZGEUrCWoizL5hetH_V_FnypFMJ1rUFNb9KcgH5VECAyoyABU4q_L0BQLUDypeiKutok5yPrw10SLZ4_y1vPsru5e2q6");
             }
 
             // What to send in GCM message.

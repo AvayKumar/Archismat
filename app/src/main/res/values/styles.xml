@@ -18,7 +18,7 @@
 
     <style name="ActionBar.Solid.Archismat.NoTitle" parent="ActionBar.Solid.Archismat">
         <item name="displayOptions">useLogo|showHome</item>
-        <item name="logo">@mipmap/ic_launcher</item>
+        <item name="logo">@drawable/archismat_logo</item>
     </style>
 
 

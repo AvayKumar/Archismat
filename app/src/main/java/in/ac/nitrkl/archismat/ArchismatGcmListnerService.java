@@ -91,14 +91,14 @@ public class ArchismatGcmListnerService extends GcmListenerService {
                     Notification.sendEventNotification(
                             getApplication(),
                             getResources().getString(R.string.event_notification_title),
-                            location
+                            name +  " (" + location + ")"
                     );
                 }
                 break;
             case 2:
                 String url = dataObject.getString("url");
                 String imageDesc = dataObject.getString("desc");
-                new DownloadImageTask(getApplication(), imageDesc, receiveTime).execute( url );
+                new DownloadImageTask(getApplication(), imageDesc, receiveTime, false).execute( url );
                 break;
             default:
                 throw new UnsupportedOperationException();

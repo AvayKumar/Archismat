@@ -30,12 +30,14 @@ public class DownloadImageTask extends AsyncTask<String, Void, Uri>{
 
     Context context;
     String mDesc, mDataTime;
+    boolean reDownload;
 
-    public DownloadImageTask(Context context, String desc, String dateTime) {
+    public DownloadImageTask(Context context, String desc, String dateTime, boolean reDownload) {
         super();
         this.context = context;
         this.mDesc = desc;
         this.mDataTime = dateTime;
+        this.reDownload = reDownload;
     }
 
     private static final String LOG_TAG = "DownloadImageTask";
@@ -129,30 +131,31 @@ public class DownloadImageTask extends AsyncTask<String, Void, Uri>{
     protected void onPostExecute(Uri uri) {
         super.onPostExecute(uri);
 
-        ContentValues values = new ContentValues();
+        if( !reDownload ) {
+            ContentValues values = new ContentValues();
 
-        values.put(ArchismatContract.UPDATE_TYPE, 2);
-        values.put(ArchismatContract.DESCRIPTION, mDesc);
-        values.put(ArchismatContract.RECEIVE_TIME, mDataTime);
-        values.put(ArchismatContract.FEATURED_PICK, uri.toString());
+            values.put(ArchismatContract.UPDATE_TYPE, 2);
+            values.put(ArchismatContract.DESCRIPTION, mDesc);
+            values.put(ArchismatContract.RECEIVE_TIME, mDataTime);
+            values.put(ArchismatContract.FEATURED_PICK, uri.toString());
 
-        context.getContentResolver().insert(ArchismatContract.CONTENT_URI, values);
+            context.getContentResolver().insert(ArchismatContract.CONTENT_URI, values);
 
-        String imageLocation = uri.getPath();
-        Bitmap imageBitmap = Util.scaleImage(MainFragment.deviceWidth, imageLocation);
+            String imageLocation = uri.getPath();
+            Bitmap imageBitmap = Util.scaleImage(MainFragment.deviceWidth, imageLocation);
 
-        boolean notification = PreferenceManager.getDefaultSharedPreferences( context )
-                .getBoolean(context.getString(R.string.SETTING_NOTIFICATION_KEY), true);
+            boolean notification = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean(context.getString(R.string.SETTING_NOTIFICATION_KEY), true);
 
-        if( notification && !MainActivity.isInForeground) {
-            Notification.sendPictureNotification(
-                    context,
-                    context.getResources().getString(R.string.event_notification_title),
-                    mDesc,
-                    imageBitmap
-            );
+            if (notification && !MainActivity.isInForeground) {
+                Notification.sendPictureNotification(
+                        context,
+                        context.getResources().getString(R.string.pic_notification_title),
+                        mDesc,
+                        imageBitmap
+                );
+            }
         }
-
     }
 
     private void  galleryAddPic() {

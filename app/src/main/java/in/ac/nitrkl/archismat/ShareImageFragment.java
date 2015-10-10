@@ -54,6 +54,9 @@ public class ShareImageFragment extends Fragment {
         String description = data.getString(IMAGE_DESC);
         String imageLocation = uri.getPath();
         Bitmap imageBitmap = Util.scaleImage(MainFragment.deviceWidth, imageLocation);
+        if( imageBitmap == null) {
+            imageBitmap = Util.scaleDefaultImage(getActivity(), MainFragment.deviceWidth);
+        }
         mImageView.setImageBitmap( imageBitmap );
         mTextView.setText( description );
 
