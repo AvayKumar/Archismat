@@ -1,9 +1,7 @@
 package in.ac.nitrkl.archismat;
 
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 
 /**
  * Created by avay on 8/9/15.

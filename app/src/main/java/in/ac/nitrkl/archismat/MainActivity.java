@@ -9,25 +9,18 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import in.ac.nitrkl.archismat.util.Notification;
 
@@ -53,6 +46,14 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
         if( savedInstanceState == null ) {
             getSupportFragmentManager().beginTransaction().add(R.id.main_container, new MainFragment()).commit();
+        }
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if( preferences != null && !preferences.contains(ArchismatPreferences.DEVICE_WIDTH) ) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics( metrics );
+            preferences.edit().putInt(ArchismatPreferences.DEVICE_WIDTH, metrics.widthPixels).apply();
         }
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
@@ -220,18 +221,14 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
         Bundle data = new Bundle();
 
-        data.putString(MapFragment.LOCATION_NAME, location);
-        data.putDouble(MapFragment.LOCATION_LONG, longitude);
-        data.putDouble(MapFragment.LOCATION_LAT, latitude);
+        data.putString(MapActivity.LOCATION_NAME, location);
+        data.putDouble(MapActivity.LOCATION_LONG, longitude);
+        data.putDouble(MapActivity.LOCATION_LAT, latitude);
 
-        MapFragment mapFragment = MapFragment.getMapFragment( data );
+        Intent mapIntent = new Intent(this, MapActivity.class);
+        mapIntent.putExtras( data );
+        startActivity(mapIntent);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.pop_in, R.anim.pop_out)
-                .replace(R.id.main_container, mapFragment)
-                .addToBackStack(null)
-                .commit();
     }
 
     @Override

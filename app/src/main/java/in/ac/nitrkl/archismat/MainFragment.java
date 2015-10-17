@@ -1,7 +1,6 @@
 package in.ac.nitrkl.archismat;
 
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -23,13 +21,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import in.ac.nitrkl.archismat.util.ArchismatCursorAdapter;
 import in.ac.nitrkl.archismat.data.ArchismatContract;
 import in.ac.nitrkl.archismat.data.ArchismatDBHealper;
+import in.ac.nitrkl.archismat.util.ArchismatCursorAdapter;
 
 
 /**
@@ -42,8 +36,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     private ArchismatCursorAdapter mAdapter;
     private int mQueryLimit = 10;
     private int preLast;
-
-    public static int deviceWidth;
 
     public MainFragment() {
         setHasOptionsMenu(true);
@@ -60,9 +52,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onResume() {
         super.onResume();
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics( metrics );
-        deviceWidth = metrics.widthPixels;
         getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 

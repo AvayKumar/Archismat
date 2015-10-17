@@ -1,17 +1,11 @@
 package in.ac.nitrkl.archismat.util;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.preference.PreferenceManager;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-
+import in.ac.nitrkl.archismat.ArchismatPreferences;
 import in.ac.nitrkl.archismat.R;
 
 /**
@@ -20,15 +14,16 @@ import in.ac.nitrkl.archismat.R;
 public class Util {
 
     public static final String BASE_URL = "http://archismat.in/";
-    public static final String IMAGE_UPLOAD_URL = BASE_URL + "uploads/files/";
 
-    public static Bitmap scaleImage(int deviceWidth, String fileName) {
+    public static Bitmap scaleImage(Context context, String fileName) {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile( fileName, options );
 
         int imageWidth = options.outWidth;
+
+        int deviceWidth = PreferenceManager.getDefaultSharedPreferences(context).getInt(ArchismatPreferences.DEVICE_WIDTH, 0);
 
         int scaleFactor = Math.max( 1, imageWidth/deviceWidth);
 
@@ -39,14 +34,14 @@ public class Util {
         return BitmapFactory.decodeFile(fileName, options);
     }
 
-    public static Bitmap scaleDefaultImage(Context context, int deviceWidth) {
+    public static Bitmap scaleDefaultImage(Context context) {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeResource(context.getResources(), R.drawable.missing_image, options);
 
         int imageWidth = options.outWidth;
-
+        int deviceWidth = PreferenceManager.getDefaultSharedPreferences(context).getInt(ArchismatPreferences.DEVICE_WIDTH, 0);
         int scaleFactor = Math.max( 1, imageWidth/deviceWidth);
 
         options.inJustDecodeBounds = false;

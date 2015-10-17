@@ -19,7 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import in.ac.nitrkl.archismat.data.ArchismatContract;
-import in.ac.nitrkl.archismat.data.ArchismatDBHealper;
 import in.ac.nitrkl.archismat.util.Notification;
 import in.ac.nitrkl.archismat.util.Util;
 
@@ -142,7 +141,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Uri>{
             context.getContentResolver().insert(ArchismatContract.CONTENT_URI, values);
 
             String imageLocation = uri.getPath();
-            Bitmap imageBitmap = Util.scaleImage(MainFragment.deviceWidth, imageLocation);
+            Bitmap imageBitmap = Util.scaleImage(context, imageLocation);
 
             boolean notification = PreferenceManager.getDefaultSharedPreferences(context)
                     .getBoolean(context.getString(R.string.SETTING_NOTIFICATION_KEY), true);

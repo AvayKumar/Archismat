@@ -3,24 +3,19 @@ package in.ac.nitrkl.archismat.util;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import in.ac.nitrkl.archismat.DownloadImageTask;
-import in.ac.nitrkl.archismat.MainFragment;
+import java.util.Date;
+
 import in.ac.nitrkl.archismat.R;
 import in.ac.nitrkl.archismat.data.ArchismatContract;
 import in.ac.nitrkl.archismat.data.ArchismatDBHealper;
-
-import java.util.Date;
 
 /**
  * Created by avay on 27/8/15.
@@ -98,9 +93,9 @@ public class ArchismatCursorAdapter extends CursorAdapter {
                 holderImage.description.setText(cursor.getString(ArchismatDBHealper.ARCH_DESCRIPTION));
                 final Uri uri = Uri.parse(cursor.getString(ArchismatDBHealper.ARCH_PICK_URI));
                 String imageLocation = uri.getPath();
-                Bitmap imageBitmap = Util.scaleImage(MainFragment.deviceWidth, imageLocation);
+                Bitmap imageBitmap = Util.scaleImage(context, imageLocation);
                 if( imageBitmap == null) {
-                    imageBitmap = Util.scaleDefaultImage(context, MainFragment.deviceWidth);
+                    imageBitmap = Util.scaleDefaultImage(context);
                 }
                 holderImage.imageUpdate.setImageBitmap( imageBitmap );
                 break;

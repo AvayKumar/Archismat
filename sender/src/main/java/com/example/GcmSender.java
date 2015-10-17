@@ -36,16 +36,16 @@ public class GcmSender {
             // Prepare JSON containing the GCM message content. What to send and where to send.
             JSONObject jGcmData = new JSONObject();
             JSONObject jData = new JSONObject();
-            String dataAlert = "{\"type\": \"0\", \"message\":\"Test alert message. Test alert message. Test alert message. Test alert message. Test alert message. Test alert message.\"}";
-            String dataEvent = "{\"type\": \"1\", \"name\":\"Insomania 9 PM\", \"location\":\"NIT Rourkela, BBA\",\"desc\":\"Event description. Event description. Event description. Event description.\",\"long\":\"84.900676\",\"lat\":\"22.251738\"}";
-            String dataPic = "{\"type\": \"2\", \"url\":\"http://www.wired.com/images_blogs/rawfile/2013/11/offset_WaterHouseMarineImages_62652-2-660x440.jpg\",\"desc\":\"Start by doing what's necessary ; then do what's possible; and suddenly you are doing the impossible.\"}";
+            String dataAlert = "{\"type\": \"0\", \"message\":\"Tommy is my dog's name\"}";
+            String dataEvent = "{\"type\": \"1\", \"name\":\"Eiffel tower\", \"location\":\"NIT Rourkela, BBA\",\"desc\":\"Event description. Event description. Event description. Event description.\",\"long\":\"2.294544\",\"lat\":\"48.858555\"}";
+            String dataPic = "{\"type\": \"2\", \"url\":\"http://archismat.in/app/uploads/files/Schedule13.jpg\",\"desc\":\"Start by doing what's necessary ; then do what's possible; and suddenly you are doing the impossible.\"}";
             jData.put("message", dataEvent);
             // Where to send GCM message.
             if (args.length > 1 && args[1] != null) {
                 jGcmData.put("to", args[1].trim());
             } else {
-                jGcmData.put("to", "/topics/archismat");
-                //jGcmData.put("to", "fHVpu62JRuY:APA91bGJXUZ4nV66q3LTZOPVl4MH483w1IiLzxDT_KZpwOYqKZGEUrCWoizL5hetH_V_FnypFMJ1rUFNb9KcgH5VECAyoyABU4q_L0BQLUDypeiKutok5yPrw10SLZ4_y1vPsru5e2q6");
+                //jGcmData.put("to", "/topics/archismat");
+                jGcmData.put("to", "ceeSP8hQRfs:APA91bF-31qiVboH89KJYh2Y_j8gSuIP7OnkM7G2RaJz_8nq43ct25ggpkSdV4NdnrBxfxGrHoqtVQaqpOxwRzM_Vbr9qoi9p-QXQcglfJzHjVq_h1OzX5NEeiJP9wWfvn0EvSuHvJzk");
             }
 
             // What to send in GCM message.

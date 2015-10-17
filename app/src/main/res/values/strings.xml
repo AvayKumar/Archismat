@@ -35,4 +35,5 @@
     <string name="alert_notification_title">Message</string>
     <string name="event_notification_title">Event</string>
     <string name="pic_notification_title">Archismat Picture</string>
+    <string name="title_activity_map">MapActivity</string>
 </resources>
